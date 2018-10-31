@@ -19,3 +19,6 @@ npm run build
 ```
 npm run lint
 ```
+
+### 预览地址
+[http://www.dhyjl.com:8080](http://www.dhyjl.com:8080)
