@@ -72,7 +72,7 @@
                         }).catch(error => {
                             this.loading3 = false;
                             console.log(error);
-                            this.$Message.error(error);
+                            this.$Message.error("新增失败");
                         })
                     }
                 })

@@ -73,8 +73,6 @@ export default {
             window.localStorage.setItem("reading_book_page_" + this.book.bookId, 0);
             this.page = 0;
         }
-
-        console.log(this.size);
         this.search();
     },
     methods: {

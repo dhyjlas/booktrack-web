@@ -15,7 +15,8 @@
             <Button type="primary" @click="goIndex()" long>返回首页</Button>
             <Button type="primary" @click="refresh()" long style="margin-top:20px;" :loading="loading">刷新图书</Button>
             <Divider />
-            <Button type="primary" @click="goBook()" long>返回目录</Button>
+            <Button type="primary" @click="again()" long>重载内容</Button>
+            <Button type="primary" @click="goBook()" long style="margin-top:20px;">返回目录</Button>
             <Button v-show="vlast" type="primary" @click="last()" long style="margin-top:20px;">上一章</Button>
             <Button v-show="vnext" type="primary" @click="next()" long style="margin-top:20px;">下一章</Button>
         </Drawer>
@@ -146,6 +147,32 @@ export default {
             this.spinShow = true;
             this.getContentByPage(this.chapter.serial + 1);
         },
+        again(){
+            this.spinShow = true;
+            this.axios({
+                method: 'get',
+                url: '/chapter/again/'+this.chapter.chapterId,
+            }).then(response => {
+                if(response.data.status == 200){
+                    this.chapter.chapterId = response.data.data.id;
+                    this.chapter.chapterName = response.data.data.chapterName;
+                    this.chapter.content = response.data.data.content;
+                    window.localStorage.setItem("reading_chapter_id", response.data.data.id);
+                    window.localStorage.setItem("reading_chapter_name", response.data.data.chapterName);
+                    window.localStorage.setItem("reading_chapter_content", response.data.data.content);
+                    this.spinShow = false;
+                    this.drawer = false;
+                    this.$Message.success(response.data.msg);
+                }else{
+                    this.spinShow = false;
+                    this.$Message.error(response.data.msg);
+                }
+            }).catch((error) => {
+                console.log(error);
+                this.spinShow = false;
+                this.$Message.error("获取内容失败");
+            })
+        }
     }
 }
 </script>
