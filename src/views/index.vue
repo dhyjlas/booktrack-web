@@ -2,7 +2,7 @@
 	<Card style="width:100%;height:100%" :dis-hover="true" :bordered="false">
 		<p slot="title">图书列表</p>
 		<a href="#" slot="extra" @click.prevent="drawer = true">
-			<Icon type="ios-construct" />
+			<Icon type="ios-construct" size="20"/>
 		</a>
 		<div>
 			<Input v-model="query" search enter-button placeholder="输入书名或作者名搜索" @on-search="search()" />

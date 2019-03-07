@@ -2,7 +2,7 @@
 	<Card style="width:100%;height:100%" :dis-hover="true" :bordered="false">
 		<p slot="title">{{book.bookName}}</p>
 		<a href="#" slot="extra" @click.prevent="drawer = true">
-			<Icon type="ios-construct" />
+			<Icon type="ios-construct" size="20"/>
 		</a>
 		<div style="padding: 10px 0;">
 			<Table border ref="selection" :columns="columns" :data="data" @on-sort-change='e=>{sortClick(e)}'></Table>

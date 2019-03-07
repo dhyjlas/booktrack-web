@@ -3,7 +3,7 @@
 		<Card style="width:100%;height:100%" :dis-hover="true" :bordered="false">
 			<p slot="title">{{chapter.chapterName}}</p>
 			<a href="#" slot="extra" @click.prevent="drawer = true">
-				<Icon type="ios-construct" />
+				<Icon type="ios-construct" size="20"/>
 			</a>
 			<div :style="'font-size: '+fontSize+'px'" v-html="chapter.content"></div>
 			<div style="margin-top:10px;text-align:center;">
