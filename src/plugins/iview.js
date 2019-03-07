@@ -1,5 +1,23 @@
 import Vue from 'vue'
-import { Button, Card, Table, Input, Row, Col, LoadingBar, Icon, Drawer, Page, Message, Select, Option, Form, FormItem, Spin, Divider } from 'iview'
+import {
+	Button,
+	Card,
+	Table,
+	Input,
+	Row,
+	Col,
+	LoadingBar,
+	Icon,
+	Drawer,
+	Page,
+	Message,
+	Select,
+	Option,
+	Form,
+	FormItem,
+	Spin,
+	Divider
+} from 'iview'
 
 Vue.component('Button', Button)
 Vue.component('Card', Card)
