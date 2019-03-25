@@ -16,7 +16,9 @@ import {
 	Form,
 	FormItem,
 	Spin,
-	Divider
+	Divider,
+	Menu,
+	MenuItem,
 } from 'iview'
 
 Vue.component('Button', Button)
@@ -36,6 +38,8 @@ Vue.component('Form', Form)
 Vue.component('FormItem', FormItem)
 Vue.component('Spin', Spin)
 Vue.component('Divider', Divider)
+Vue.component('Menu', Menu)
+Vue.component('MenuItem', MenuItem)
 
 Vue.prototype.$loading = LoadingBar;
 Vue.prototype.$Message = Message;

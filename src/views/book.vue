@@ -2,7 +2,7 @@
 	<Card style="width:100%;height:100%" :dis-hover="true" :bordered="false">
 		<p slot="title">{{book.bookName}}</p>
 		<a href="#" slot="extra" @click.prevent="drawer = true">
-			<Icon type="ios-construct" size="20"/>
+			<Icon type="md-menu" size="20"/>
 		</a>
 		<div style="padding: 10px 0;">
 			<Table border ref="selection" :columns="columns" :data="data" @on-sort-change='e=>{sortClick(e)}'></Table>
@@ -12,8 +12,10 @@
 			 show-total @on-change="e=>{pageSearch(e)}" @on-page-size-change="e=>(sizeSearch(e))" />
 		</div>
 		<Drawer :closable="false" v-model="drawer">
-			<Button type="primary" @click="goIndex()" long>返回首页</Button>
-			<Button type="primary" @click="refresh()" long style="margin-top:20px;" :loading="loading">刷新图书</Button>
+			<Menu style="width: 100%;" @on-select="e=>{select(e)}">
+				<MenuItem name="1"><Icon type="md-home" />返回首页</MenuItem>
+				<MenuItem name="2"><Icon type="md-sync" />刷新图书</MenuItem>
+			</Menu>
 		</Drawer>
 		<Spin size="large" fix v-if="spinShow"></Spin>
 	</Card>
@@ -153,13 +155,23 @@
 				})
 
 			},
+			select(e){
+				if(e == '1'){
+					this.goIndex();
+				}else if(e == '2'){
+					this.refresh();
+				}
+			},
 			goIndex() {
 				this.$emit("routerpush", {
 					name: "index"
 				});
 			},
 			refresh() {
-				this.loading = true;
+                const msg = this.$Message.loading({
+                    content: '刷新中...',
+                    duration: 0
+                });
 				this.axios({
 					method: 'post',
 					url: '/book/refresh',
@@ -170,16 +182,25 @@
 					if (response.data.status == 200) {
 						this.$Message.success(response.data.msg);
 						this.search();
-						this.drawer = false;
 					} else {
 						this.$Message.error(response.data.msg);
 					}
-					this.loading = false;
+					setTimeout(msg, 1);
 				}).catch((error) => {
 					console.log(error);
 					this.$Message.error("刷新失败");
+					setTimeout(msg, 1);
 				})
 			}
 		}
 	}
 </script>
+<style scope>
+.ivu-drawer-body {
+	padding: 0;
+}
+.ivu-divider-horizontal {
+	margin: 0;
+}
+</style>
+

@@ -2,7 +2,7 @@
 	<Card style="width:100%;height:100%" :dis-hover="true" :bordered="false">
 		<p slot="title">图书列表</p>
 		<a href="#" slot="extra" @click.prevent="drawer = true">
-			<Icon type="ios-construct" size="20"/>
+			<Icon type="md-menu" size="20"/>
 		</a>
 		<div>
 			<Input v-model="query" search enter-button placeholder="输入书名或作者名搜索" @on-search="search()" />
@@ -11,7 +11,9 @@
 			<Table border ref="selection" :columns="columns" :data="data" @on-sort-change='e=>{sortClick(e)}'></Table>
 		</div>
 		<Drawer :closable="false" v-model="drawer">
-			<Button type="success" long @click="add()">新增</Button>
+			<Menu style="width: 100%;" @on-select="e=>{select(e)}">
+				<MenuItem name="1"><Icon type="md-add-circle" />新增图书</MenuItem>
+			</Menu>
 		</Drawer>
 		</Drawer>
 	</Card>
@@ -108,6 +110,11 @@
 					}
 				});
 			},
+			select(e){
+				if(e=='1'){
+					this.add();
+				}
+			},
 			add() {
 				this.$emit("routerpush", {
 					name: "add"
@@ -116,3 +123,11 @@
 		}
 	}
 </script>
+<style scope>
+.ivu-drawer-body {
+	padding: 0;
+}
+.ivu-divider-horizontal {
+	margin: 0;
+}
+</style>

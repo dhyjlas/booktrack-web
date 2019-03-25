@@ -3,7 +3,7 @@
 		<Card style="width:100%;height:100%" :dis-hover="true" :bordered="false">
 			<p slot="title">{{chapter.chapterName}}</p>
 			<a href="#" slot="extra" @click.prevent="drawer = true">
-				<Icon type="ios-construct" size="20"/>
+				<Icon type="md-menu" size="20"/>
 			</a>
 			<div :style="'font-size: '+fontSize+'px'" v-html="chapter.content"></div>
 			<div style="margin-top:10px;text-align:center;">
@@ -12,16 +12,18 @@
 				<a v-show="!vnext" @click="next()" style="margin-left:80px;">下一章</a>
 			</div>
 			<Drawer :closable="false" v-model="drawer">
-				<Button type="primary" @click="goIndex()" long>返回首页</Button>
-				<Button type="primary" @click="refresh()" long style="margin-top:20px;" :loading="loading">刷新图书</Button>
-				<Divider />
-				<Button type="primary" @click="increase()" long :disabled="vIncrease">增大字体</Button>
-				<Button type="primary" @click="reduce()" long :disabled="vReduce" style="margin-top:20px;">减小字体</Button>
-				<Divider />
-				<Button type="primary" @click="again()" long>重载内容</Button>
-				<Button type="primary" @click="goBook()" long style="margin-top:20px;">返回目录</Button>
-				<Button type="primary" @click="last()" long :disabled="vlast" style="margin-top:20px;">上一章</Button>
-				<Button type="primary" @click="next()" long :disabled="vnext" style="margin-top:20px;">下一章</Button>
+				<Menu style="width: 100%;" @on-select="e=>{select(e)}">
+					<MenuItem name="1"><Icon type="md-home" />返回首页</MenuItem>
+					<MenuItem name="2"><Icon type="md-sync" />刷新图书</MenuItem>
+					<Divider />
+					<MenuItem name="3"><Icon type="md-add" />增大字体</MenuItem>
+					<MenuItem name="4"><Icon type="md-remove" />减小字体</MenuItem>
+					<Divider />
+					<MenuItem name="5"><Icon type="ios-sync" />重载内容</MenuItem>
+					<MenuItem name="6"><Icon type="ios-undo" />返回目录</MenuItem>
+					<MenuItem name="7"><Icon type="ios-arrow-up" />上一章</MenuItem>
+					<MenuItem name="8"><Icon type="ios-arrow-down" />下一章</MenuItem>
+				</Menu>
 			</Drawer>
 			<Spin size="large" fix v-if="spinShow"></Spin>
 		</Card>
@@ -66,6 +68,25 @@
 			this.disabledFont();
 		},
 		methods: {
+			select(e){
+				if(e == '1'){
+					this.goIndex();
+				}else if(e == '2'){
+					this.refresh();
+				}else if(e == '3'){
+					this.increase();
+				}else if(e == '4'){
+					this.reduce();
+				}else if(e == '5'){
+					this.again();
+				}else if(e == '6'){
+					this.goBook();
+				}else if(e =='7'){
+					this.last();
+				}else if(e == '8'){
+					this.next();
+				}
+			},
 			goIndex() {
 				this.$emit("routerpush", {
 					name: "index"
@@ -90,7 +111,10 @@
 				})
 			},
 			refresh() {
-				this.loading = true;
+                const msg = this.$Message.loading({
+                    content: '刷新中...',
+                    duration: 0
+                });
 				this.axios({
 					method: 'post',
 					url: '/book/refresh',
@@ -103,9 +127,11 @@
 					} else {
 						this.$Message.error(response.data.msg);
 					}
+					setTimeout(msg, 1);
 				}).catch((error) => {
 					console.log(error);
 					this.$Message.error("刷新失败");
+					setTimeout(msg, 1);
 				})
 			},
 			setLastAndNext() {
@@ -206,3 +232,14 @@
 		}
 	}
 </script>
+<style scope>
+.ivu-drawer-body {
+	padding: 0;
+}
+.ivu-divider-horizontal {
+	margin: 0;
+}
+.ivu-menu-vertical .ivu-menu-item-group-title {
+	height: 14px
+}
+</style>
