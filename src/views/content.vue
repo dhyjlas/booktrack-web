@@ -1,7 +1,7 @@
 <template>
 	<div id="target" ref="mybox">
 		<Card style="width:100%;height:100%" :dis-hover="true" :bordered="false">
-			<p slot="title">{{chapter.chapterName}}</p>
+			<p slot="title"><Icon type="ios-undo" size="24" style="margin-right:8px;cursor:pointer;" @click="goBook"/>{{chapter.chapterName}}</p>
 			<a href="#" slot="extra" @click.prevent="drawer = true">
 				<Icon type="md-menu" size="20"/>
 			</a>

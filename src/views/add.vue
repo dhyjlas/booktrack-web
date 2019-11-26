@@ -1,7 +1,7 @@
 <template>
 	<Card style="width:100%;height:100%" :dis-hover="true" :bordered="false">
 		<p slot="title">图书新增</p>
-		<Form ref="book" :model="book" :rules="ruleValidate" :label-width="80">
+		<Form ref="book" :model="book" :rules="ruleValidate" :label-width="80" class="form-ov">
 			<FormItem label="图书网址" prop="url">
 				<Input v-model="book.url" placeholder="请输入图书网址"></Input>
 			</FormItem>
@@ -22,21 +22,16 @@
 				loading3: false,
 				book: {
 					url: '',
-					source: '0'
+					source: 0
 				},
 				sourceList: [{
-					value: "0",
+					value: 0,
 					label: "自动识别"
 				}],
 				ruleValidate: {
 					url: [{
 						required: true,
 						message: '图书网址不能为空',
-						trigger: 'blur'
-					}, ],
-					source: [{
-						required: true,
-						message: '来源网站不能为空',
 						trigger: 'blur'
 					}, ]
 				}
@@ -92,3 +87,17 @@
 		}
 	}
 </script>
+<style scope>
+.form-ov .ivu-input {
+	border-radius: 0;
+}
+.form-ov .ivu-select-selection{
+	border-radius: 0;
+}
+.form-ov .ivu-select-dropdown{
+	border-radius: 0;
+}
+.form-ov .ivu-btn{
+	border-radius: 0;
+}
+</style>

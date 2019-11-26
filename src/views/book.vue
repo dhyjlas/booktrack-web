@@ -1,14 +1,14 @@
 <template>
 	<Card style="width:100%;height:100%" :dis-hover="true" :bordered="false">
-		<p slot="title">{{book.bookName}}</p>
+		<p slot="title"><Icon type="ios-undo" size="24" style="margin-right:8px;cursor:pointer;" @click="goIndex"/>{{book.bookName}}</p>
 		<a href="#" slot="extra" @click.prevent="drawer = true">
 			<Icon type="md-menu" size="20"/>
 		</a>
 		<div style="padding: 10px 0;">
-			<Table border ref="selection" :columns="columns" :data="data" @on-sort-change='e=>{sortClick(e)}'></Table>
+			<Table border ref="selection" :columns="columns" :data="data" @on-sort-change='e=>{sortClick(e)}' @on-row-click="go" class="book-table-vo"></Table>
 		</div>
-		<div style="text-align: right;">
-			<Page :current="page+1" :total="total" :page-size="size" :page-size-opts="sizeOpts" show-elevator show-sizer
+		<div style="text-align: center;">
+			<Page :current="page+1" :total="total" :page-size="size" :page-size-opts="sizeOpts" show-elevator
 			 show-total @on-change="e=>{pageSearch(e)}" @on-page-size-change="e=>(sizeSearch(e))" />
 		</div>
 		<Drawer :closable="false" v-model="drawer">
@@ -37,21 +37,22 @@
 				columns: [{
 					title: '章节目录',
 					align: 'center',
-					render: (h, params) => {
-						return h('div', [
-							h('a', {
-								props: {
-									type: 'error',
-									size: 'small'
-								},
-								on: {
-									click: () => {
-										this.go(params.row)
-									}
-								}
-							}, params.row.chapterName)
-						]);
-					}
+					key: 'chapterName',
+					// render: (h, params) => {
+					// 	return h('div', [
+					// 		h('a', {
+					// 			props: {
+					// 				type: 'error',
+					// 				size: 'small'
+					// 			},
+					// 			on: {
+					// 				click: () => {
+					// 					this.go(params.row)
+					// 				}
+					// 			}
+					// 		}, params.row.chapterName)
+					// 	]);
+					// }
 				}, ],
 				data: []
 			}
@@ -201,6 +202,9 @@
 }
 .ivu-divider-horizontal {
 	margin: 0;
+}
+.book-table-vo .ivu-table-row{
+	cursor: pointer
 }
 </style>
 
