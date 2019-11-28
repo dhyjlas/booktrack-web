@@ -102,7 +102,6 @@
 			},
 			//切页按钮
 			pageSearch(e) {
-				console.log(e);
 				this.page = e - 1;
 				window.localStorage.setItem("reading_book_page_" + this.book.bookId, this.page);
 				this.search();

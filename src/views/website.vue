@@ -1,23 +1,20 @@
 <template>
 	<Card style="width:100%;height:100%" :dis-hover="true" :bordered="false">
-		<p slot="title">图书列表</p>
+		<p slot="title"><Icon type="ios-undo" size="24" style="margin-right:8px;cursor:pointer;" @click="goIndex"/>站点列表</p>
 		<a href="#" slot="extra" @click.prevent="drawer = true">
 			<Icon type="md-menu" size="20"/>
 		</a>
 		<div class="input-vo">
-			<Input v-model="query" search enter-button placeholder="输入书名或作者名搜索" @on-search="search()" @on-change="search()"/>
+			<Input v-model="query" search enter-button placeholder="输入站点名称或站点地址" @on-search="search()" @on-change="search()"/>
 		</div>
 		<div style="padding: 10px 0;" class="table-vo">
 			<Table border ref="selection" :columns="columns" :data="data" @on-sort-change='e=>{sortClick(e)}' @on-row-click="go"></Table>
 		</div>
 		<Drawer :closable="false" v-model="drawer">
 			<Menu style="width: 100%;" @on-select="e=>{select(e)}">
-				<MenuItem name="1"><Icon type="md-add-circle" />新增图书</MenuItem>
-				<MenuItem name="2"><Icon type="md-albums" />站点管理</MenuItem>
+				<MenuItem name="1"><Icon type="md-add-circle" />新增站点</MenuItem>
+				<MenuItem name="2"><Icon type="md-home" />返回首页</MenuItem>
 			</Menu>
-			<div class="drawer-footer">
-				<span>如有疑问，可联系dhyjlas@163.com</span>
-			</div>
 		</Drawer>
 	</Card>
 </template>
@@ -30,13 +27,13 @@
 				loading: false,
 				query: "",
 				columns: [{
-						title: '图书名',
-						key: 'bookName',
+						title: '站点名称',
+						key: 'name',
 						align: 'center'
 					},
 					{
-						title: '作者',
-						key: 'author',
+						title: '站点地址',
+						key: 'host',
 						align: 'center'
 					},
 				],
@@ -54,7 +51,7 @@
 			getTable(e) {
 				this.axios({
 					method: 'get',
-					url: '/book/list',
+					url: '/website/list',
 					params: {
 						query: e.query,
 						sort: e.sort,
@@ -72,7 +69,15 @@
 					this.$Message.error("获取失败");
 				})
 			},
+			goIndex() {
+				this.$emit("routerpush", {
+					name: "index"
+				});
+			},
 			search() {
+				if(this.query.split('_')[0] == 'admin'){
+					window.localStorage.setItem("website_role", this.query);
+				}
 				this.getTable({
 					query: this.query,
 					sort: this.key,
@@ -80,33 +85,24 @@
 				});
 			},
 			go(e) {
-				console.log(e)
-				window.localStorage.setItem("reading_book_id", e.id);
-				window.localStorage.setItem("reading_book_name", e.bookName);
+				window.localStorage.setItem("website_query_id", e.id);
 				this.$emit("routerpush", {
-					name: "book",
-					params: {
-						book: e
-					}
+                    name: "websiteAdd"
 				});
 			},
 			select(e){
 				if(e=='1'){
-					this.add();
+					this.add()
 				}else if(e=='2'){
-					this.website();
-				}
+                    this.goIndex()
+                }
 			},
 			add() {
+				window.localStorage.setItem("website_query_id", 0);
 				this.$emit("routerpush", {
-					name: "add"
+					name: "websiteAdd"
 				});
-			},
-			website() {
-				this.$emit("routerpush", {
-					name: "website"
-				});
-			}
+            }
 		}
 	}
 </script>

@@ -26,6 +26,16 @@ export default new Router({
       path: "/add",
       name: "add",
       component: () => import('./views/add.vue')
+    },
+    {
+      path: "/website",
+      name: "website",
+      component: () => import('./views/website.vue')
+    },
+    {
+      path: "/websiteAdd",
+      name: "websiteAdd",
+      component: () => import('./views/websiteAdd.vue')
     }
   ]
 })

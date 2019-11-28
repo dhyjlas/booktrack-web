@@ -19,6 +19,7 @@ import {
 	Divider,
 	Menu,
 	MenuItem,
+	Modal,
 } from 'iview'
 
 Vue.component('Button', Button)
@@ -40,8 +41,10 @@ Vue.component('Spin', Spin)
 Vue.component('Divider', Divider)
 Vue.component('Menu', Menu)
 Vue.component('MenuItem', MenuItem)
+Vue.component('Modal', Modal)
 
 Vue.prototype.$loading = LoadingBar;
 Vue.prototype.$Message = Message;
+Vue.prototype.$Modal = Modal;
 
 import 'iview/dist/styles/iview.css'

@@ -7,7 +7,7 @@ import './plugins/iview.js';
 import './plugins/axios.js';
 
 Vue.config.productionTip = false;
-window.document.title = "图书爬取工具";
+window.document.title = "图书阅读器";
 
 new Vue({
   router,
