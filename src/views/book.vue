@@ -1,6 +1,7 @@
 <template>
 	<Card style="width:100%;height:100%" :dis-hover="true" :bordered="false">
-		<p slot="title"><Icon type="ios-undo" size="24" style="margin-right:8px;cursor:pointer;" @click="goIndex"/>{{book.bookName}}</p>
+		<p slot="title"><Icon type="ios-undo" size="24" style="margin-right:8px;cursor:pointer;" @click="goIndex"/>{{book.bookName}}
+		<Icon type="md-sync" size="20" style="margin-left:4px;cursor:pointer;" @click="refresh"/></p>
 		<a href="#" slot="extra" @click.prevent="drawer = true">
 			<Icon type="md-menu" size="20"/>
 		</a>
@@ -11,11 +12,27 @@
 			<Page :current="page+1" :total="total" :page-size="size" :page-size-opts="sizeOpts" show-elevator
 			 show-total @on-change="e=>{pageSearch(e)}" @on-page-size-change="e=>(sizeSearch(e))" />
 		</div>
-		<Drawer :closable="false" v-model="drawer">
-			<Menu style="width: 100%;" @on-select="e=>{select(e)}">
+		<Drawer :closable="false" v-model="drawer" @on-visible-change="openDrawer">
+			<Menu style="width: 100%;" @on-select="e=>{select(e)}" v-if="isMenu">
 				<MenuItem name="1"><Icon type="md-home" />返回首页</MenuItem>
 				<MenuItem name="2"><Icon type="md-sync" />刷新图书</MenuItem>
+				<MenuItem name="3"><Icon type="md-book" />图书信息</MenuItem>
 			</Menu>
+			<Form ref="bookInfo" :model="bookInfo" :label-width="0" v-if="!isMenu" class="book-drawer-vo">
+				<FormItem prop="">
+				</FormItem>
+				<FormItem prop="bookName">
+					<Input v-model="bookInfo.bookName"><span slot="prepend">书名</span></Input>
+				</FormItem>
+				<FormItem prop="author">
+					<Input v-model="bookInfo.author"><span slot="prepend">作者</span></Input>
+				</FormItem>
+				<FormItem prop="url">
+					<Input v-model="bookInfo.url"><span slot="prepend">网址</span></Input>
+				</FormItem>
+				<Button type="primary" @click="handleSubmit" :loading="loading" long>保存</Button>
+				<Button style="margin-top: 10px" @click="closeBookInfo" long>返回</Button>
+			</Form>
 		</Drawer>
 		<Spin size="large" fix v-if="spinShow"></Spin>
 	</Card>
@@ -25,6 +42,7 @@
 	export default {
 		data() {
 			return {
+				isMenu: true,
 				spinShow: false,
 				book: [],
 				drawer: false,
@@ -34,25 +52,31 @@
 				page: 0,
 				sizeOpts: [10, 20, 30, 50],
 				query: "",
+				bookInfo: {},
 				columns: [{
 					title: '章节目录',
 					align: 'center',
-					key: 'chapterName',
-					// render: (h, params) => {
-					// 	return h('div', [
-					// 		h('a', {
-					// 			props: {
-					// 				type: 'error',
-					// 				size: 'small'
-					// 			},
-					// 			on: {
-					// 				click: () => {
-					// 					this.go(params.row)
-					// 				}
-					// 			}
-					// 		}, params.row.chapterName)
-					// 	]);
-					// }
+					// key: 'chapterName',
+					render: (h, params) => {
+						if(params.row.id == window.localStorage.getItem("reading_" + this.book.bookId + "_chapter_id")){
+							return h('div', {style:{color: "#2d8cf0"}}, params.row.chapterName)
+						}else{
+							return h('div', {}, params.row.chapterName)
+						}
+						// return h('div', [
+						// 	h('a', {
+						// 		props: {
+						// 			type: 'error',
+						// 			size: 'small'
+						// 		},
+						// 		on: {
+						// 			click: () => {
+						// 				this.go(params.row)
+						// 			}
+						// 		}
+						// 	}, params.row.chapterName)
+						// ]);
+					}
 				}, ],
 				data: []
 			}
@@ -135,11 +159,11 @@
 					url: '/chapter/content/' + e.id,
 				}).then(response => {
 					if (response.data.status == 200) {
-						window.localStorage.setItem("reading_chapter_id", response.data.data.id);
-						window.localStorage.setItem("reading_chapter_name", response.data.data.chapterName);
-						window.localStorage.setItem("reading_chapter_content", response.data.data.content);
-						window.localStorage.setItem("reading_chapter_total", this.total);
-						window.localStorage.setItem("reading_chapter_serial", e.serial);
+						window.localStorage.setItem("reading_" + this.book.bookId + "_chapter_id", response.data.data.id);
+						window.localStorage.setItem("reading_" + this.book.bookId + "_chapter_name", response.data.data.chapterName);
+						window.localStorage.setItem("reading_" + this.book.bookId + "_chapter_content", response.data.data.content);
+						window.localStorage.setItem("reading_" + this.book.bookId + "_chapter_total", this.total);
+						window.localStorage.setItem("reading_" + this.book.bookId + "_chapter_serial", e.serial);
 						this.spinShow = false;
 						this.$emit("routerpush", {
 							name: "content"
@@ -160,12 +184,56 @@
 					this.goIndex();
 				}else if(e == '2'){
 					this.refresh();
+				}else if(e == '3'){
+					this.openBookInfo();
+				}
+			},
+			openBookInfo(){
+				this.isMenu = false;
+				this.axios({
+					method: 'get',
+					url: '/book/info/' + this.book.bookId
+				}).then(response => {
+					if (response.data.status == 200) {
+						this.bookInfo = response.data.data;
+					}
+					}).catch(error => {
+						console.log(error);
+						this.$Message.error("提交失败");
+					})
+			},
+			closeBookInfo(){
+				this.isMenu = true;
+			},
+			openDrawer(e){
+				if(e){
+					this.isMenu = true;
 				}
 			},
 			goIndex() {
 				this.$emit("routerpush", {
 					name: "index"
 				});
+			},
+			handleSubmit(){
+				this.loading = true;
+				this.axios({
+					method: 'post',
+					url: '/book/save',
+					data: this.bookInfo
+				}).then(response => {
+					if (response.data.status == 200) {
+						this.$Message.success(response.data.msg);
+						this.drawer = false;
+					} else {
+						this.$Message.error(response.data.msg);
+					}
+					this.loading = false;
+				}).catch(error => {
+					this.loading = false;
+					console.log(error);
+					this.$Message.error("提交失败");
+				})
 			},
 			refresh() {
                 const msg = this.$Message.loading({
@@ -204,6 +272,15 @@
 }
 .book-table-vo .ivu-table-row{
 	cursor: pointer
+}
+.book-drawer-vo .ivu-input {
+	border-radius: 0;
+}
+.book-drawer-vo .ivu-input-group-prepend{
+	border-radius: 0;
+}
+.book-drawer-vo .ivu-btn {
+	border-radius: 0;
 }
 </style>
 

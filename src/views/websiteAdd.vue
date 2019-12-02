@@ -257,7 +257,7 @@
 .web-form-ov textarea.ivu-input {
     font-size: 12px;
 }
-.website-card-vo .ivu-card {
+.website-card-vo {
 	border-radius: 0;
 }
 @media (max-width: 768px){

@@ -55,11 +55,11 @@
 				bookName: window.localStorage.getItem("reading_book_name")
 			}
 			this.chapter = {
-				chapterId: window.localStorage.getItem("reading_chapter_id"),
-				chapterName: window.localStorage.getItem("reading_chapter_name"),
-				content: window.localStorage.getItem("reading_chapter_content"),
-				serial: parseInt(window.localStorage.getItem("reading_chapter_serial")),
-				total: parseInt(window.localStorage.getItem("reading_chapter_total"))
+				chapterId: window.localStorage.getItem("reading_" + this.book.bookId + "_chapter_id"),
+				chapterName: window.localStorage.getItem("reading_" + this.book.bookId + "_chapter_name"),
+				content: window.localStorage.getItem("reading_" + this.book.bookId + "_chapter_content"),
+				serial: parseInt(window.localStorage.getItem("reading_" + this.book.bookId + "_chapter_serial")),
+				total: parseInt(window.localStorage.getItem("reading_" + this.book.bookId + "_chapter_total"))
 			}
 			this.setLastAndNext();
 			if (window.localStorage.getItem("reading_config_fontSize")) {
@@ -161,10 +161,10 @@
 						this.chapter.chapterId = response.data.data.id;
 						this.chapter.chapterName = response.data.data.chapterName;
 						this.chapter.content = response.data.data.content;
-						window.localStorage.setItem("reading_chapter_id", this.chapter.chapterId);
-						window.localStorage.setItem("reading_chapter_name", this.chapter.chapterName);
-						window.localStorage.setItem("reading_chapter_content", this.chapter.content);
-						window.localStorage.setItem("reading_chapter_serial", this.chapter.serial);
+						window.localStorage.setItem("reading_" + this.book.bookId + "_chapter_id", this.chapter.chapterId);
+						window.localStorage.setItem("reading_" + this.book.bookId + "_chapter_name", this.chapter.chapterName);
+						window.localStorage.setItem("reading_" + this.book.bookId + "_chapter_content", this.chapter.content);
+						window.localStorage.setItem("reading_" + this.book.bookId + "_chapter_serial", this.chapter.serial);
 						this.$refs.mybox.scrollIntoView();
 						this.chapter.serial = e;
 						this.setLastAndNext();
@@ -213,9 +213,9 @@
 						this.chapter.chapterId = response.data.data.id;
 						this.chapter.chapterName = response.data.data.chapterName;
 						this.chapter.content = response.data.data.content;
-						window.localStorage.setItem("reading_chapter_id", response.data.data.id);
-						window.localStorage.setItem("reading_chapter_name", response.data.data.chapterName);
-						window.localStorage.setItem("reading_chapter_content", response.data.data.content);
+						window.localStorage.setItem("reading_" + this.book.bookId + "_chapter_id", response.data.data.id);
+						window.localStorage.setItem("reading_" + this.book.bookId + "_chapter_name", response.data.data.chapterName);
+						window.localStorage.setItem("reading_" + this.book.bookId + "_chapter_content", response.data.data.content);
 						this.spinShow = false;
 						this.drawer = false;
 						this.$Message.success(response.data.msg);
