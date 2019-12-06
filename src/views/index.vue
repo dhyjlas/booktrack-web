@@ -8,7 +8,17 @@
 			<Input v-model="query" search enter-button placeholder="输入书名或作者名搜索" @on-search="search()" @on-change="search()"/>
 		</div>
 		<div style="padding: 10px 0;" class="table-vo">
-			<Table border ref="selection" :columns="columns" :data="data" @on-sort-change='e=>{sortClick(e)}' @on-row-click="go"></Table>
+			<Row :gutter="10">
+				<Col :xs="24" :sm="12" :md="8" :lg="6" v-for="book in data">
+					<a class="book-botton" @click="go(book)">
+						<span class="book-name">{{book.bookName}}</span>
+						<span class="book-chapters">已更新{{book.chapters}}章</span>
+						<span class="book-author">{{book.author}}</span>
+					</a>
+				</Col>
+			</Row>
+			<!-- <a class="book-botton" v-for="book in data" @click="go(book)"><span class="book-name">{{book.bookName}}</span><span class="book-author">{{book.author}}</span></a> -->
+			<!-- <Table border ref="selection" :columns="columns" :data="data" @on-sort-change='e=>{sortClick(e)}' @on-row-click="go"></Table> -->
 		</div>
 		<Drawer :closable="false" v-model="drawer">
 			<Menu style="width: 100%;" @on-select="e=>{select(e)}">
@@ -27,7 +37,6 @@
 		data() {
 			return {
 				drawer: false,
-				loading: false,
 				query: "",
 				columns: [{
 						title: '图书名',
@@ -80,7 +89,6 @@
 				});
 			},
 			go(e) {
-				console.log(e)
 				window.localStorage.setItem("reading_book_id", e.id);
 				window.localStorage.setItem("reading_book_name", e.bookName);
 				this.$emit("routerpush", {
@@ -111,6 +119,46 @@
 	}
 </script>
 <style scope>
+.book-botton{
+  /* border-radius: 4px; */
+  border: 1px solid #515a6e;
+  color: #515a6e;
+  text-decoration: none;
+  /* padding: 10px 10px; */
+  height: 70px;
+  width: 100%;
+  margin-top: 10px;
+  margin-right: 10px;
+  float: left;
+  background-color: #f3f3f3;
+  }
+.book-botton:hover {
+  color: #fff;
+  background-color: #515a6e;
+}
+.book-name{
+	font-size: 18px;
+	display:block;
+  	/* border-bottom:1px solid #35495e; */
+  	padding: 10px 10px;
+	overflow: hidden; 
+	white-space: nowrap; 
+	text-overflow: ellipsis;
+	font-weight:bold;
+}
+.book-chapters{
+	font-size: 12px;
+  	padding: 0 10px;
+}
+.book-author{
+	font-size: 12px;
+	display:block;
+  	padding: 0 10px;
+	float: right;
+	overflow: hidden; 
+	white-space: nowrap; 
+	text-overflow: ellipsis; 
+}
 .input-vo .ivu-input {
 	border-radius: 0;
 }
