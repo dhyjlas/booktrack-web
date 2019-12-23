@@ -1,12 +1,12 @@
 <template>
-	<Card style="width:100%;height:100%" :dis-hover="true" :bordered="false">
+	<Card style="width:100%;height:100%" :dis-hover="true" :bordered="false" class="book-vo">
 		<p slot="title"><Icon type="ios-undo" size="24" style="margin-right:8px;cursor:pointer;" @click="goIndex"/>{{book.bookName}}
 		<Icon type="md-sync" size="20" style="margin-left:4px;cursor:pointer;" @click="refresh"/></p>
 		<a href="#" slot="extra" @click.prevent="drawer = true">
 			<Icon type="md-menu" size="20"/>
 		</a>
-		<div style="padding: 10px 0;">
-			<Table border ref="selection" :columns="columns" :data="data" @on-sort-change='e=>{sortClick(e)}' @on-row-click="go" class="book-table-vo"></Table>
+		<div style="padding: 0 0 10px 0;">
+			<Table :show-header="false" ref="selection" :columns="columns" :data="data" @on-sort-change='e=>{sortClick(e)}' @on-row-click="go" class="book-table-vo"></Table>
 		</div>
 		<div style="text-align: center;">
 			<Page :current="page+1" :total="total" :page-size="size" :page-size-opts="sizeOpts" show-elevator
@@ -281,6 +281,14 @@
 }
 .book-drawer-vo .ivu-btn {
 	border-radius: 0;
+}
+</style>
+<style>
+.book-vo .ivu-card-body{
+	padding: 0;
+}
+.book-vo .ivu-table-wrapper {
+	border: 0 solid #dcdee2;
 }
 </style>
 

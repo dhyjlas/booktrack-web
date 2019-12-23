@@ -22,7 +22,7 @@
 					<MenuItem name="5"><Icon type="ios-sync" />重载内容</MenuItem>
 					<MenuItem name="6"><Icon type="ios-undo" />返回目录</MenuItem>
 					<MenuItem name="7"><Icon type="ios-arrow-up" />上一章</MenuItem>
-					<MenuItem name="8"><Icon type="ios-arrow-down" />下一章</MenuItem>
+					<MenuItem name="8" v-if="!vnext"><Icon type="ios-arrow-down" />下一章</MenuItem>
 				</Menu>
 			</Drawer>
 			<Spin size="large" fix v-if="spinShow"></Spin>
