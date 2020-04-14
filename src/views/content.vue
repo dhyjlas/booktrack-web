@@ -44,7 +44,6 @@
 				book: [],
 				chapter: [],
 				drawer: false,
-				loading: false,
 				query: "",
 				nowSerial: 0
 			}

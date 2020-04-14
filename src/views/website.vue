@@ -75,9 +75,6 @@
 				});
 			},
 			search() {
-				if(this.query.split('_')[0] == 'admin'){
-					window.localStorage.setItem("website_role", this.query);
-				}
 				this.getTable({
 					query: this.query,
 					sort: this.key,

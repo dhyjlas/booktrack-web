@@ -17,6 +17,8 @@
 				<MenuItem name="1"><Icon type="md-home" />返回首页</MenuItem>
 				<MenuItem name="2"><Icon type="md-sync" />刷新图书</MenuItem>
 				<MenuItem name="3"><Icon type="md-book" />图书信息</MenuItem>
+				<MenuItem name="4"><Icon type="md-close" />删除图书</MenuItem>
+				<MenuItem name="5"><Icon type="md-close" />清空内容</MenuItem>
 			</Menu>
 			<Form ref="bookInfo" :model="bookInfo" :label-width="0" v-if="!isMenu" class="book-drawer-vo">
 				<FormItem prop="">
@@ -30,7 +32,12 @@
 				<FormItem prop="url">
 					<Input v-model="bookInfo.url"><span slot="prepend">网址</span></Input>
 				</FormItem>
-				<Button type="primary" @click="handleSubmit" :loading="loading" long>保存</Button>
+				<FormItem prop="url">
+					<Select v-model="bookInfo.source">
+						<Option v-for="item in sourceList" :value="item.value" :key="item.value">{{ item.label }}</Option>
+					</Select>
+				</FormItem>
+				<Button type="primary" @click="handleSubmit" :loading="loading" long v-if="isAdmin()">保存</Button>
 				<Button style="margin-top: 10px" @click="closeBookInfo" long>返回</Button>
 			</Form>
 		</Drawer>
@@ -52,7 +59,9 @@
 				page: 0,
 				sizeOpts: [10, 20, 30, 50],
 				query: "",
+				sourceList: [],
 				bookInfo: {},
+                role: window.localStorage.getItem("website_role") ? window.localStorage.getItem("website_role") : "user",
 				columns: [{
 					title: '章节目录',
 					align: 'center',
@@ -99,8 +108,22 @@
 				this.page = 0;
 			}
 			this.search();
+
+			this.axios({
+				method: 'get',
+				url: '/book/website',
+			}).then(response => {
+				if (response.data.status == 200) {
+					response.data.data.forEach((item, index) => {
+						this.sourceList.push(item);
+					})
+				}
+			})
 		},
 		methods: {
+			isAdmin(){
+				return this.role.split('_')[0] == 'admin'
+			},
 			getTable(e) {
 				this.axios({
 					method: 'get',
@@ -186,6 +209,10 @@
 					this.refresh();
 				}else if(e == '3'){
 					this.openBookInfo();
+				}else if(e == '4'){
+					this.deleteBook();
+				}else if(e == '5'){
+					this.deleteChapter();
 				}
 			},
 			openBookInfo(){
@@ -220,7 +247,10 @@
 				this.axios({
 					method: 'post',
 					url: '/book/save',
-					data: this.bookInfo
+					data: this.bookInfo,
+					headers:{
+						Authorization: this.role
+					}
 				}).then(response => {
 					if (response.data.status == 200) {
 						this.$Message.success(response.data.msg);
@@ -259,6 +289,74 @@
 					this.$Message.error("刷新失败");
 					setTimeout(msg, 1);
 				})
+			},
+			deleteBook(){
+				this.$Modal.confirm({
+                    title: '提醒',
+                    content: '<p>是否确认删除整本图书？</p>',
+                    onOk: () => {
+						const msg = this.$Message.loading({
+							content: '删除中...',
+							duration: 0
+						});
+						this.axios({
+							method: 'delete',
+							url: '/book/all/' + this.book.bookId,
+							headers:{
+								Authorization: this.role
+							}
+						}).then(response => {
+							if (response.data.status == 200) {
+								this.$Message.success(response.data.msg);
+								this.$emit("routerpush", {
+									name: "index"
+								});
+							} else {
+								this.$Message.error(response.data.msg);
+							}
+							setTimeout(msg, 1);
+						}).catch(error => {
+							console.log(error);
+							this.$Message.error("提交失败");
+							setTimeout(msg, 1);
+						})
+                    },
+                    onCancel: () => {
+                    }
+				});
+			},
+			deleteChapter(){
+				this.$Modal.confirm({
+                    title: '提醒',
+                    content: '<p>是否确认清空所有章节内容？</p>',
+                    onOk: () => {
+						const msg = this.$Message.loading({
+							content: '清空中...',
+							duration: 0
+						});
+						this.axios({
+							method: 'delete',
+							url: '/chapter/all/' + this.book.bookId,
+							headers:{
+								Authorization: this.role
+							}
+						}).then(response => {
+							if (response.data.status == 200) {
+								this.$Message.success(response.data.msg);
+								this.search();
+							} else {
+								this.$Message.error(response.data.msg);
+							}
+							setTimeout(msg, 1);
+						}).catch(error => {
+							console.log(error);
+							this.$Message.error("提交失败");
+							setTimeout(msg, 1);
+						})
+                    },
+                    onCancel: () => {
+                    }
+				});
 			}
 		}
 	}
@@ -280,6 +378,9 @@
 	border-radius: 0;
 }
 .book-drawer-vo .ivu-btn {
+	border-radius: 0;
+}
+.ivu-select-selection {
 	border-radius: 0;
 }
 </style>
